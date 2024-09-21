@@ -12,14 +12,32 @@ type OptionProps = {
 	groupName: string;
 	onChange?: (option: OptionType) => void;
 	option: OptionType;
+	setContainerFontSize?: any;
+	optionGroupRef?: any;
 };
 
 export const Option = (props: OptionProps) => {
-	const { value, title, selected, groupName, onChange, option } = props;
+	const {
+		value,
+		title,
+		selected,
+		groupName,
+		onChange,
+		option,
+		setContainerFontSize,
+		optionGroupRef,
+	} = props;
 
 	const optionRef = useRef<HTMLDivElement>(null);
 
-	const handleChange = () => onChange?.(option);
+	const handleChange = () => {
+		onChange?.(option);
+		setContainerFontSize(option.value);
+		for (let i = 0; i < 3; i++) {
+			optionGroupRef.current.children[i].setAttribute('data-checked', 'false');
+		}
+		optionRef.current?.setAttribute('data-checked', 'true');
+	};
 
 	useEnterSubmit({ onChange, option });
 
@@ -33,14 +51,15 @@ export const Option = (props: OptionProps) => {
 			data-checked={isChecked}
 			data-testid={inputId}
 			tabIndex={0}
-			ref={optionRef}>
+			ref={optionRef}
+			id={'div_' + inputId}>
 			<input
 				className={styles.input}
 				type='radio'
 				name={groupName}
 				id={inputId}
 				value={value}
-				onChange={handleChange}
+				onClick={handleChange}
 				tabIndex={-1}
 			/>
 			<label className={styles.label} htmlFor={inputId}>
