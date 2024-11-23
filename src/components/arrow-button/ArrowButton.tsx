@@ -1,25 +1,28 @@
 import arrow from 'src/images/arrow.svg';
+
 import styles from './ArrowButton.module.scss';
-import { useEffect, useRef, useState } from 'react';
+import { forwardRef, useRef } from 'react';
 
-/** Функция для обработки открытия/закрытия формы */
-export type OnClick = () => void;
-
-const handleOnClick: OnClick = () => {};
-
-export const ArrowButton = (props:any) => {
-	const imgRef = useRef<HTMLImageElement | null>(null);
-	const buttonRef = useRef<HTMLDivElement | null>(null);
-	useEffect(() => {
-		if (props.openOrClose === 'close') {
-			imgRef.current?.setAttribute('style', 'transform:none');
-			buttonRef.current?.setAttribute('style','transform:translate(612px)')
-		} else if (props.openOrClose === 'open') {
-			imgRef.current?.removeAttribute('style');
-			buttonRef.current?.removeAttribute('style')
+const root = document.querySelector('#root');
+function openAside(refButton: any, refImg: any, ref: any, style: any) {
+	root?.addEventListener('click', handleOpenAside);
+	function handleOpenAside(event: any) {
+		const eventTargetElement = event.target as HTMLElement;
+		if (
+			eventTargetElement.closest('.Article-module__article__mC2Yg') ||
+			eventTargetElement.closest(`.${styles.container}`)
+		) {
+			refImg.current.classList.remove(styles.arrow_open);
+			refButton.current.classList.remove(styles.container_open);
+			ref.current.classList.remove(style);
+			root?.removeEventListener('click', handleOpenAside);
 		}
+	}
+}
 
-	}, [props.openOrClose]);
+export const ArrowButton = forwardRef((props: any, ref: any) => {
+	const refButton = useRef<any>(null);
+	const refImg = useRef<any>(null);
 	return (
 		/* Не забываем указаывать role и aria-label атрибуты для интерактивных элементов */
 		<div
@@ -27,20 +30,21 @@ export const ArrowButton = (props:any) => {
 			aria-label='Открыть/Закрыть форму параметров статьи'
 			tabIndex={0}
 			className={styles.container}
-			ref={buttonRef}
+			ref={refButton}
 			onClick={() => {
-				if (props.openOrClose === 'close') {
-					props.setOpenOrClose('open');
-				} else {
-					props.setOpenOrClose('close');
+				if (!ref.current.classList.contains(props.style)) {
+					refImg.current.classList.add(styles.arrow_open);
+					refButton.current.classList.add(styles.container_open);
+					ref.current.classList.add(props.style);
+					openAside(refButton, refImg, ref, props.style);
 				}
 			}}>
 			<img
 				src={arrow}
+				ref={refImg}
 				alt='иконка стрелочки'
 				className={styles.arrow}
-				ref={imgRef}
 			/>
 		</div>
 	);
-};
+});

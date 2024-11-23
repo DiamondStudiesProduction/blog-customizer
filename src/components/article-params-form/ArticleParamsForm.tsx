@@ -1,126 +1,171 @@
 import { ArrowButton } from 'components/arrow-button';
-import { Button } from 'components/button';
-import { Select } from 'components/select';
+import { forwardRef, useRef, useState } from 'react';
 
 import styles from './ArticleParamsForm.module.scss';
-import { Separator } from '../separator';
+
+import { Select } from '../select';
 import { RadioGroup } from '../radio-group';
-import { useEffect, useRef, useState } from 'react';
+import { Text } from '../text';
+import { Separator } from '../separator';
+import { Button } from '../button';
 import {
 	backgroundColors,
 	contentWidthArr,
+	defaultArticleState,
 	fontColors,
 	fontFamilyOptions,
 	fontSizeOptions,
+	OptionType,
 } from 'src/constants/articleProps';
 
-export const ArticleParamsForm = (props: any) => {
-	const [openOrClose, setOpenOrClose] = useState('close');
-	const handleSetOpenOrClose = (value: string) => setOpenOrClose(value);
-	const asideRef = useRef<HTMLElement | null>(null);
-	const formRef = useRef<any>(null);
+export const ArticleParamsForm = forwardRef((props: any, refParams: any) => {
+	const refAside = useRef<HTMLElement>(null);
 
-	const [fontColor, setFontColor] = useState(null);
-	const [backgroundColor, setBackgroundColor] = useState(null);
-	const [containerWidth, setContainerWidth] = useState(null);
-	const [containerFontFamiy, setContainerFontFamiy] = useState(null);
-	const [containerFontSize, setContainerFontSize] = useState(null);
+	const [fontFamilyOptionsState, setFontFamilyOptionsState] = useState(
+		fontFamilyOptions[0]
+	);
+	const fontFamilyOptionsStateChange = (e: OptionType) => {
+		setFontFamilyOptionsState({
+			title: e.title,
+			value: e.value,
+			className: e.className,
+		});
+	};
 
-	useEffect(() => {
-		openOrClose === 'close'
-			? asideRef.current?.setAttribute('style', 'transform:none')
-			: asideRef.current?.removeAttribute('style');
-	}, [openOrClose]);
+	const [fontColorsState, setFontColors] = useState(fontColors[0]);
+	const fontColorsStateChange = (e: OptionType) => {
+		setFontColors({
+			title: e.title,
+			value: e.value,
+			className: e.className,
+			optionClassName: e.optionClassName,
+		});
+	};
+
+	const [backgroundColorsState, setBackgroundColorsState] = useState(
+		backgroundColors[0]
+	);
+	const backgroundColorsStateChange = (e: OptionType) => {
+		setBackgroundColorsState({
+			title: e.title,
+			value: e.value,
+			className: e.className,
+			optionClassName: e.optionClassName,
+		});
+	};
+
+	const [fontSizeOptionsState, setFontSizeOptionsState] = useState(
+		fontSizeOptions[0]
+	);
+	const fontSizeOptionsStateChange = (e: OptionType) => {
+		setFontSizeOptionsState({
+			title: e.title,
+			value: e.value,
+			className: e.className,
+		});
+	};
+
+	const [contentWidthArrState, setContentWidthArrState] = useState(
+		contentWidthArr[0]
+	);
+	const contentWidthArrStateChange = (e: OptionType) => {
+		setContentWidthArrState({
+			title: e.title,
+			value: e.value,
+			className: e.className,
+			optionClassName: e.optionClassName,
+		});
+	};
+
 	return (
 		<>
-			<ArrowButton
-				openOrClose={openOrClose}
-				setOpenOrClose={handleSetOpenOrClose}
-			/>
-			<aside className={styles.container} ref={asideRef}>
-				<form className={styles.form} ref={formRef}>
-					<h3 className={styles.mainTitle}>Задайте параметры</h3>
-					<div>
-						<p className={styles.title}>шрифт</p>
-						<Select
-							selected={fontFamilyOptions[0]}
-							options={fontFamilyOptions}
-							setContainerFontFamiy={setContainerFontFamiy}
-							id='font-family'
-						/>
-					</div>
-					<div>
-						<p className={styles.title}>размер шрифта</p>
-						<div className={styles.radioGroup}>
-							<RadioGroup
-								name=''
-								title=''
-								options={fontSizeOptions}
-								selected={fontSizeOptions[0]}
-								setContainerFontSize={setContainerFontSize}
-							/>
-						</div>
-					</div>
-					<div>
-						<p className={styles.title}>Цвет шрифта</p>
-						<Select
-							selected={fontColors[0]}
-							options={fontColors}
-							setFontColor={setFontColor}
-						/>
-					</div>
-					<div>
-						<Separator />
-					</div>
-					<div>
-						<p className={styles.title}>Цвет фона</p>
-						<Select
-							selected={backgroundColors[0]}
-							options={backgroundColors}
-							setBackgroundColor={setBackgroundColor}
-						/>
-					</div>
-					<div>
-						<p className={styles.title}>Ширина контента</p>
-						<Select
-							selected={contentWidthArr[0]}
-							options={contentWidthArr}
-							setContainerWidth={setContainerWidth}
-						/>
-					</div>
+			<ArrowButton ref={refAside} style={styles.container_open} />
+			<aside className={styles.container} ref={refAside}>
+				<form className={styles.form}>
+					<Text uppercase weight={800} size={25}>
+						Задайте параметры
+					</Text>
+					<Select
+						title='ШРИФТ'
+						selected={fontFamilyOptionsState}
+						options={fontFamilyOptions}
+						onChange={(e: OptionType) => {
+							fontFamilyOptionsStateChange(e);
+						}}
+					/>
+					<RadioGroup
+						title='РАЗМЕР ШРИФТА'
+						options={fontSizeOptions}
+						selected={fontSizeOptionsState}
+						name='fontSize'
+						onChange={(e: OptionType) => {
+							fontSizeOptionsStateChange(e);
+						}}
+					/>
+					<Select
+						title='ЦВЕТ ШРИФТА'
+						selected={fontColorsState}
+						options={fontColors}
+						onChange={(e: OptionType) => {
+							fontColorsStateChange(e);
+						}}
+					/>
+					<Separator />
+					<Select
+						title='ЦВЕТ ФОНА'
+						selected={backgroundColorsState}
+						options={backgroundColors}
+						onChange={(e: OptionType) => {
+							backgroundColorsStateChange(e);
+						}}
+					/>
+					<Select
+						title='ШИРИНА КОНТЕНТА'
+						selected={contentWidthArrState}
+						options={contentWidthArr}
+						onChange={(e: OptionType) => {
+							contentWidthArrStateChange(e);
+						}}
+					/>
+
 					<div className={styles.bottomContainer}>
 						<Button
 							title='Сбросить'
 							type='reset'
-							setfontColorState={props.setfontColorState}
-							fontColor={fontColor}
-							setBackgroundColorState={props.setBackgroundColorState}
-							backgroundColor={backgroundColor}
-							setContainerWidthState={props.setContainerWidthState}
-							containerWidth={containerWidth}
-							setContainerFontFamiy={props.setContainerFontFamilyState}
-							containerFontFamiy={containerFontFamiy}
-							setContainerFontSize={props.setContainerFontSizeState}
-							containerFontSize={containerFontSize}
-							asideRef={asideRef}
+							onClick={() => {
+								refParams.current.setAttribute(
+									'style',
+									`--font-family: ${defaultArticleState.fontFamilyOption.value};
+									--font-size: ${defaultArticleState.fontSizeOption.value};
+									--font-color: ${defaultArticleState.fontColor.value};
+									--container-width: ${defaultArticleState.contentWidth.value};
+									--bg-color: ${defaultArticleState.backgroundColor.value};`
+								);
+								setFontFamilyOptionsState(fontFamilyOptions[0]);
+								setFontColors(fontColors[0]);
+								setBackgroundColorsState(backgroundColors[0]);
+								setFontSizeOptionsState(fontSizeOptions[0]);
+								setContentWidthArrState(contentWidthArr[0]);
+							}}
 						/>
 						<Button
 							title='Применить'
 							type='submit'
-							setfontColorState={props.setfontColorState}
-							fontColor={fontColor}
-							setBackgroundColorState={props.setBackgroundColorState}
-							backgroundColor={backgroundColor}
-							setContainerWidthState={props.setContainerWidthState}
-							containerWidth={containerWidth}
-							setContainerFontFamiy={props.setContainerFontFamilyState}
-							containerFontFamiy={containerFontFamiy}
-							setContainerFontSize={props.setContainerFontSizeState}
-							containerFontSize={containerFontSize}
+							onClick={(event) => {
+								event.preventDefault();
+								refParams.current.setAttribute(
+									'style',
+									`--font-family: ${fontFamilyOptionsState.value};
+									--font-size: ${fontSizeOptionsState.value};
+									--font-color: ${fontColorsState.value};
+									--container-width: ${contentWidthArrState.value};
+									--bg-color: ${backgroundColorsState.value};`
+								);
+							}}
 						/>
 					</div>
 				</form>
 			</aside>
 		</>
 	);
-};
+});

@@ -18,19 +18,13 @@ type SelectProps = {
 	onChange?: (selected: OptionType) => void;
 	onClose?: () => void;
 	title?: string;
-	setFontColor?: any;
-	setBackgroundColor?: any;
-	setContainerWidth?: any;
-	setContainerFontFamiy?: any;
-	id?: string;
 };
 
 export const Select = (props: SelectProps) => {
 	const { options, placeholder, selected, onChange, onClose, title } = props;
 	const [isOpen, setIsOpen] = useState<boolean>(false);
-
 	const rootRef = useRef<HTMLDivElement>(null);
-	const placeholderRef = useRef<any>(null);
+	const placeholderRef = useRef<HTMLDivElement>(null);
 
 	useOutsideClickClose({
 		isOpen,
@@ -47,34 +41,6 @@ export const Select = (props: SelectProps) => {
 	const handleOptionClick = (option: OptionType) => {
 		setIsOpen(false);
 		onChange?.(option);
-		placeholderRef.current.textContent = option.title;
-		if (option.optionTitle === 'fontColors') {
-			props.setFontColor(option.value);
-			placeholderRef.current.setAttribute(
-				'class',
-				'Select-module__placeholder__bB0Jm ' +
-					styles[option.optionClassName as string]
-			);
-		}
-		if (option.optionTitle === 'backgroundColors') {
-			props.setBackgroundColor(option.value);
-			placeholderRef.current.setAttribute(
-				'class',
-				'Select-module__placeholder__bB0Jm ' +
-					styles[option.optionClassName as string]
-			);
-		}
-		if (option.optionTitle === 'contentWidthArr') {
-			props.setContainerWidth(option.value);
-			placeholderRef.current.setAttribute(
-				'class',
-				'Select-module__placeholder__bB0Jm ' +
-					styles[option.optionClassName as string]
-			);
-		}
-		option.optionTitle === 'fontFamily'
-			? props.setContainerFontFamiy(option.value)
-			: false;
 	};
 	const handlePlaceHolderClick: MouseEventHandler<HTMLDivElement> = () => {
 		setIsOpen((isOpen) => !isOpen);
