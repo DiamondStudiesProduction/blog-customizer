@@ -7,7 +7,7 @@ const root = document.querySelector('#root');
 function openAside(refButton: any, refImg: any, ref: any, style: any) {
 	root?.addEventListener('click', handleOpenAside);
 	function handleOpenAside(event: any) {
-		const eventTargetElement = event.target as  HTMLElement;
+		const eventTargetElement = event.target as HTMLElement;
 		if (
 			eventTargetElement.closest('.Article-module__article__mC2Yg') ||
 			eventTargetElement.closest(`.${styles.container}`)
