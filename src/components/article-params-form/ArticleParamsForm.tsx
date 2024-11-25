@@ -1,5 +1,5 @@
 import { ArrowButton } from 'components/arrow-button';
-import { forwardRef, useRef, useState } from 'react';
+import { FormEvent, useRef, useState } from 'react';
 
 import styles from './ArticleParamsForm.module.scss';
 
@@ -9,6 +9,7 @@ import { Text } from '../text';
 import { Separator } from '../separator';
 import { Button } from '../button';
 import {
+	ArticleStateType,
 	backgroundColors,
 	contentWidthArr,
 	defaultArticleState,
@@ -18,70 +19,68 @@ import {
 	OptionType,
 } from 'src/constants/articleProps';
 
-export const ArticleParamsForm = forwardRef((props: any, refParams: any) => {
+type ArticleParamsFormProps = {
+	currentArticleState: ArticleStateType;
+	setCurrentArticleState: (articleState: ArticleStateType) => void;
+};
+
+export const ArticleParamsForm = ({
+	currentArticleState,
+	setCurrentArticleState,
+}: ArticleParamsFormProps) => {
 	const refAside = useRef<HTMLElement>(null);
 
 	const [fontFamilyOptionsState, setFontFamilyOptionsState] = useState(
-		fontFamilyOptions[0]
+		currentArticleState.fontFamilyOption
 	);
-	const fontFamilyOptionsStateChange = (e: OptionType) => {
-		setFontFamilyOptionsState({
-			title: e.title,
-			value: e.value,
-			className: e.className,
-		});
+	const fontFamilyOptionsStateChange = (optionData: OptionType) => {
+		setFontFamilyOptionsState(optionData);
 	};
 
-	const [fontColorsState, setFontColors] = useState(fontColors[0]);
-	const fontColorsStateChange = (e: OptionType) => {
-		setFontColors({
-			title: e.title,
-			value: e.value,
-			className: e.className,
-			optionClassName: e.optionClassName,
-		});
+	const [fontColorsState, setFontColors] = useState(
+		currentArticleState.fontColor
+	);
+	const fontColorsStateChange = (optionData: OptionType) => {
+		setFontColors(optionData);
 	};
 
 	const [backgroundColorsState, setBackgroundColorsState] = useState(
-		backgroundColors[0]
+		currentArticleState.backgroundColor
 	);
-	const backgroundColorsStateChange = (e: OptionType) => {
-		setBackgroundColorsState({
-			title: e.title,
-			value: e.value,
-			className: e.className,
-			optionClassName: e.optionClassName,
-		});
+	const backgroundColorsStateChange = (optionData: OptionType) => {
+		setBackgroundColorsState(optionData);
 	};
 
 	const [fontSizeOptionsState, setFontSizeOptionsState] = useState(
-		fontSizeOptions[0]
+		currentArticleState.fontSizeOption
 	);
-	const fontSizeOptionsStateChange = (e: OptionType) => {
-		setFontSizeOptionsState({
-			title: e.title,
-			value: e.value,
-			className: e.className,
-		});
+	const fontSizeOptionsStateChange = (optionData: OptionType) => {
+		setFontSizeOptionsState(optionData);
 	};
 
 	const [contentWidthArrState, setContentWidthArrState] = useState(
-		contentWidthArr[0]
+		currentArticleState.contentWidth
 	);
-	const contentWidthArrStateChange = (e: OptionType) => {
-		setContentWidthArrState({
-			title: e.title,
-			value: e.value,
-			className: e.className,
-			optionClassName: e.optionClassName,
-		});
+	const contentWidthArrStateChange = (optionData: OptionType) => {
+		setContentWidthArrState(optionData);
 	};
 
 	return (
 		<>
 			<ArrowButton ref={refAside} style={styles.container_open} />
 			<aside className={styles.container} ref={refAside}>
-				<form className={styles.form}>
+				<form
+					className={styles.form}
+					onSubmit={(e: FormEvent) => {
+						e.preventDefault();
+						setCurrentArticleState({
+							backgroundColor: backgroundColorsState,
+							contentWidth: contentWidthArrState,
+							fontColor: fontColorsState,
+							fontFamilyOption: fontFamilyOptionsState,
+							fontSizeOption: fontSizeOptionsState,
+						});
+					}}>
 					<Text uppercase weight={800} size={25}>
 						Задайте параметры
 					</Text>
@@ -89,8 +88,8 @@ export const ArticleParamsForm = forwardRef((props: any, refParams: any) => {
 						title='ШРИФТ'
 						selected={fontFamilyOptionsState}
 						options={fontFamilyOptions}
-						onChange={(e: OptionType) => {
-							fontFamilyOptionsStateChange(e);
+						onChange={(optionData: OptionType) => {
+							fontFamilyOptionsStateChange(optionData);
 						}}
 					/>
 					<RadioGroup
@@ -98,16 +97,16 @@ export const ArticleParamsForm = forwardRef((props: any, refParams: any) => {
 						options={fontSizeOptions}
 						selected={fontSizeOptionsState}
 						name='fontSize'
-						onChange={(e: OptionType) => {
-							fontSizeOptionsStateChange(e);
+						onChange={(optionData: OptionType) => {
+							fontSizeOptionsStateChange(optionData);
 						}}
 					/>
 					<Select
 						title='ЦВЕТ ШРИФТА'
 						selected={fontColorsState}
 						options={fontColors}
-						onChange={(e: OptionType) => {
-							fontColorsStateChange(e);
+						onChange={(optionData: OptionType) => {
+							fontColorsStateChange(optionData);
 						}}
 					/>
 					<Separator />
@@ -115,16 +114,16 @@ export const ArticleParamsForm = forwardRef((props: any, refParams: any) => {
 						title='ЦВЕТ ФОНА'
 						selected={backgroundColorsState}
 						options={backgroundColors}
-						onChange={(e: OptionType) => {
-							backgroundColorsStateChange(e);
+						onChange={(optionData: OptionType) => {
+							backgroundColorsStateChange(optionData);
 						}}
 					/>
 					<Select
 						title='ШИРИНА КОНТЕНТА'
 						selected={contentWidthArrState}
 						options={contentWidthArr}
-						onChange={(e: OptionType) => {
-							contentWidthArrStateChange(e);
+						onChange={(optionData: OptionType) => {
+							contentWidthArrStateChange(optionData);
 						}}
 					/>
 
@@ -133,39 +132,25 @@ export const ArticleParamsForm = forwardRef((props: any, refParams: any) => {
 							title='Сбросить'
 							type='reset'
 							onClick={() => {
-								refParams.current.setAttribute(
-									'style',
-									`--font-family: ${defaultArticleState.fontFamilyOption.value};
-									--font-size: ${defaultArticleState.fontSizeOption.value};
-									--font-color: ${defaultArticleState.fontColor.value};
-									--container-width: ${defaultArticleState.contentWidth.value};
-									--bg-color: ${defaultArticleState.backgroundColor.value};`
-								);
-								setFontFamilyOptionsState(fontFamilyOptions[0]);
-								setFontColors(fontColors[0]);
-								setBackgroundColorsState(backgroundColors[0]);
-								setFontSizeOptionsState(fontSizeOptions[0]);
-								setContentWidthArrState(contentWidthArr[0]);
+								setFontFamilyOptionsState(defaultArticleState.fontFamilyOption);
+								setFontColors(defaultArticleState.fontColor);
+								setBackgroundColorsState(defaultArticleState.backgroundColor);
+								setFontSizeOptionsState(defaultArticleState.fontSizeOption);
+								setContentWidthArrState(defaultArticleState.contentWidth);
+
+								setCurrentArticleState({
+									backgroundColor: defaultArticleState.backgroundColor,
+									contentWidth: defaultArticleState.contentWidth,
+									fontColor: defaultArticleState.fontColor,
+									fontFamilyOption: defaultArticleState.fontFamilyOption,
+									fontSizeOption: defaultArticleState.fontSizeOption,
+								});
 							}}
 						/>
-						<Button
-							title='Применить'
-							type='submit'
-							onClick={(event) => {
-								event.preventDefault();
-								refParams.current.setAttribute(
-									'style',
-									`--font-family: ${fontFamilyOptionsState.value};
-									--font-size: ${fontSizeOptionsState.value};
-									--font-color: ${fontColorsState.value};
-									--container-width: ${contentWidthArrState.value};
-									--bg-color: ${backgroundColorsState.value};`
-								);
-							}}
-						/>
+						<Button title='Применить' type='submit' />
 					</div>
 				</form>
 			</aside>
 		</>
 	);
-});
+};

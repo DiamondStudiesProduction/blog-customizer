@@ -1,28 +1,39 @@
 import arrow from 'src/images/arrow.svg';
 
 import styles from './ArrowButton.module.scss';
-import { forwardRef, useRef } from 'react';
+import stylesArticle from '../article/Article.module.scss';
+import { forwardRef, useEffect, useRef, useState } from 'react';
 
 const root = document.querySelector('#root');
-function openAside(refButton: any, refImg: any, ref: any, style: any) {
-	root?.addEventListener('click', handleOpenAside);
-	function handleOpenAside(event: any) {
+
+export const ArrowButton = forwardRef((props: any, refAside: any) => {
+	const refButton = useRef<HTMLDivElement>(null);
+	const refImg = useRef<HTMLImageElement>(null);
+	const [sideBar, setSideBar] = useState('isClose');
+	useEffect(() => {
+		if (sideBar === 'isOpened') {
+			refImg.current?.classList.add(styles.arrow_open);
+			refButton.current?.classList.add(styles.container_open);
+			refAside.current.classList.add(props.style);
+			root?.addEventListener('click', openAside);
+		} else if (sideBar === 'isClose') {
+			refImg.current?.classList.remove(styles.arrow_open);
+			refButton.current?.classList.remove(styles.container_open);
+			refAside.current.classList.remove(props.style);
+		}
+	}, [sideBar]);
+
+	function openAside(event: Event) {
 		const eventTargetElement = event.target as HTMLElement;
 		if (
-			eventTargetElement.closest('.Article-module__article__mC2Yg') ||
+			eventTargetElement.closest(`.${stylesArticle.article}`) ||
 			eventTargetElement.closest(`.${styles.container}`)
 		) {
-			refImg.current.classList.remove(styles.arrow_open);
-			refButton.current.classList.remove(styles.container_open);
-			ref.current.classList.remove(style);
-			root?.removeEventListener('click', handleOpenAside);
+			setSideBar('isClose');
+			root?.removeEventListener('click', openAside);
 		}
 	}
-}
 
-export const ArrowButton = forwardRef((props: any, ref: any) => {
-	const refButton = useRef<any>(null);
-	const refImg = useRef<any>(null);
 	return (
 		/* Не забываем указаывать role и aria-label атрибуты для интерактивных элементов */
 		<div
@@ -32,11 +43,10 @@ export const ArrowButton = forwardRef((props: any, ref: any) => {
 			className={styles.container}
 			ref={refButton}
 			onClick={() => {
-				if (!ref.current.classList.contains(props.style)) {
-					refImg.current.classList.add(styles.arrow_open);
-					refButton.current.classList.add(styles.container_open);
-					ref.current.classList.add(props.style);
-					openAside(refButton, refImg, ref, props.style);
+				if (sideBar === 'isClose') {
+					setSideBar('isOpened');
+				} else if (sideBar === 'isOpened') {
+					setSideBar('isClose');
 				}
 			}}>
 			<img
