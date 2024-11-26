@@ -1,13 +1,13 @@
-import { ArrowButton } from 'components/arrow-button';
+import { ArrowButton } from '../../ui/arrow-button/ArrowButton';
 import { FormEvent, useRef, useState } from 'react';
 
 import styles from './ArticleParamsForm.module.scss';
 
-import { Select } from '../select';
-import { RadioGroup } from '../radio-group';
-import { Text } from '../text';
-import { Separator } from '../separator';
-import { Button } from '../button';
+import { Select } from '../../ui/select/Select';
+import { RadioGroup } from '../../ui/radio-group/RadioGroup';
+import { Text } from '../../ui/text/Text';
+import { Separator } from '../../ui/separator/Separator';
+import { Button } from '../../ui/button/Button';
 import {
 	ArticleStateType,
 	backgroundColors,
@@ -18,6 +18,8 @@ import {
 	fontSizeOptions,
 	OptionType,
 } from 'src/constants/articleProps';
+import { useOutsideClickClose } from 'src/ui/select/hooks/useOutsideClickClose';
+import clsx from 'clsx';
 
 type ArticleParamsFormProps = {
 	currentArticleState: ArticleStateType;
@@ -28,7 +30,14 @@ export const ArticleParamsForm = ({
 	currentArticleState,
 	setCurrentArticleState,
 }: ArticleParamsFormProps) => {
-	const refAside = useRef<HTMLElement>(null);
+	const asideRef = useRef<HTMLDivElement>(null);
+	const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
+
+	useOutsideClickClose({
+		isOpen: isMenuOpen,
+		rootRef: asideRef,
+		onChange: setIsMenuOpen,
+	});
 
 	const [fontFamilyOptionsState, setFontFamilyOptionsState] = useState(
 		currentArticleState.fontFamilyOption
@@ -67,8 +76,15 @@ export const ArticleParamsForm = ({
 
 	return (
 		<>
-			<ArrowButton ref={refAside} style={styles.container_open} />
-			<aside className={styles.container} ref={refAside}>
+			<ArrowButton
+				isOpen={isMenuOpen}
+				onClick={() => {
+					setIsMenuOpen(!isMenuOpen);
+				}}
+			/>
+			<aside
+				className={clsx(styles.container, isMenuOpen && styles.container_open)}
+				ref={asideRef}>
 				<form
 					className={styles.form}
 					onSubmit={(e: FormEvent) => {
@@ -130,7 +146,7 @@ export const ArticleParamsForm = ({
 					<div className={styles.bottomContainer}>
 						<Button
 							title='Сбросить'
-							type='reset'
+							type='clear'
 							onClick={() => {
 								setFontFamilyOptionsState(defaultArticleState.fontFamilyOption);
 								setFontColors(defaultArticleState.fontColor);
@@ -147,7 +163,7 @@ export const ArticleParamsForm = ({
 								});
 							}}
 						/>
-						<Button title='Применить' type='submit' />
+						<Button title='Применить' type='apply' />
 					</div>
 				</form>
 			</aside>
