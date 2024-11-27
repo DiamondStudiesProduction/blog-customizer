@@ -22,13 +22,11 @@ import { useOutsideClickClose } from 'src/ui/select/hooks/useOutsideClickClose';
 import clsx from 'clsx';
 
 type ArticleParamsFormProps = {
-	currentArticleState: ArticleStateType;
 	setCurrentArticleState: (articleState: ArticleStateType) => void;
 };
 
 export const ArticleParamsForm = ({
-	currentArticleState,
-	setCurrentArticleState,
+	setCurrentArticleState
 }: ArticleParamsFormProps) => {
 	const asideRef = useRef<HTMLDivElement>(null);
 	const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
@@ -40,35 +38,35 @@ export const ArticleParamsForm = ({
 	});
 
 	const [fontFamilyOptionsState, setFontFamilyOptionsState] = useState(
-		currentArticleState.fontFamilyOption
+		defaultArticleState.fontFamilyOption
 	);
 	const fontFamilyOptionsStateChange = (optionData: OptionType) => {
 		setFontFamilyOptionsState(optionData);
 	};
 
 	const [fontColorsState, setFontColors] = useState(
-		currentArticleState.fontColor
+		defaultArticleState.fontColor
 	);
 	const fontColorsStateChange = (optionData: OptionType) => {
 		setFontColors(optionData);
 	};
 
 	const [backgroundColorsState, setBackgroundColorsState] = useState(
-		currentArticleState.backgroundColor
+		defaultArticleState.backgroundColor
 	);
 	const backgroundColorsStateChange = (optionData: OptionType) => {
 		setBackgroundColorsState(optionData);
 	};
 
 	const [fontSizeOptionsState, setFontSizeOptionsState] = useState(
-		currentArticleState.fontSizeOption
+		defaultArticleState.fontSizeOption
 	);
 	const fontSizeOptionsStateChange = (optionData: OptionType) => {
 		setFontSizeOptionsState(optionData);
 	};
 
 	const [contentWidthArrState, setContentWidthArrState] = useState(
-		currentArticleState.contentWidth
+		defaultArticleState.contentWidth
 	);
 	const contentWidthArrStateChange = (optionData: OptionType) => {
 		setContentWidthArrState(optionData);

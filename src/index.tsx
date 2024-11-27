@@ -28,7 +28,6 @@ const App = () => {
 				} as CSSProperties
 			}>
 			<ArticleParamsForm
-				currentArticleState={currentArticleState}
 				setCurrentArticleState={setCurrentArticleState}
 			/>
 			<Article />
